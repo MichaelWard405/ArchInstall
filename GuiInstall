@@ -1,0 +1,119 @@
+to begin the Gui install first type and enter "archinstall"
+wait for the gui to open
+now working from the top, use arrow keys to navigate and enter to open them
+select your language(normally set to your region install for me the default is english so i can leave it alone)
+
+locales can also be left alone unless you know your keyboard uses
+
+in mirrors and repositories, press select region and pick your region
+once selected you can press back 
+
+in disk configuration, partitioning, use best-effort
+select what drive(or unallocated space you dual boot) you want to install linux 
+btrfs, yes, Use Compression
+
+in LVM, default, btrfs, yes, Use Compression
+
+you can skip Disk encryption, if you would like to use it follow these steps (only useful on devices that might be stolen:laptops, it isnt useful on desktops) 
+encryption type, LVM on LUKS
+add a password for the encrytion
+skip iteration time
+in partitions select what you want encrypted
+press back
+
+in btrfs snapshots, TimeShift
+press back
+
+skip swap
+
+in bootloader, bootloader, Grub
+press back
+
+skip kernal
+
+Change hostname if you would like (name of the device)
+
+in authentication, root password, enter a password for your root
+in user account, add a user, enter your name/username, enter your password, make your main account sudo(press yes), add any extra accounts you would like when finished press confirm and exit
+press back
+
+in profile, type, Desktop, hyprland, seatd
+in greeter, ly
+press back 
+
+in applications, blutooth, yes, audio, pipewire, power management, power-profile-deamon
+press back
+
+in network configuration, copy iso
+
+in additional packages add the following:
+(install all if you dont know what your doing, if you do feel free to skip or add a few more)
+(use /"package name" to search for them)
+
+amd-ucode - updates for amd cpu 
+base - required
+base-devel - dev packages
+blueman - bluetooth applet
+btrfs-progs - file system management needed for btrfs  
+cmake - needed to build certain files
+discord - names says it all
+efibootmgr - required by grub 
+flatpak - needed to install packages using flat hub
+git - installs git 
+gnome-disk-utility
+grim - screenshot tool
+grub - bootloader
+grub-btrfs - adds btrfs support to grub
+impression - used to make bootinstallers in linux
+inotify-tools - needed for grub btrfs deamon to spot new snapshots
+kitty - personal fav terminal
+kitty-shell-intergration
+kitty-terminfo
+linux - required
+linux-firmware - required
+ly - login manager
+nautilus - file explorer 
+neovim - personal fav IDE
+networkmanager - easy network management 
+obsidian - note taking app
+openrgb - for led control
+openssh - to utilize ssh 
+pipewire - needed For audio
+pipewire-alsa - needed for audio framework
+pipewire-pulse - needed for audio framework
+pipewire-jack - needed for audio framework
+prismlauncher - minecraft java launcher
+reflector - manage mirrors for pacman
+sudo - to run commands as other users
+timeshift - a gui to utilize snapshots  
+ttf-bigblueterminal-nerd
+vlc - media player
+waybar - taskbar for hypr
+wireplumber - pipewire session manager
+wofi - application search for hypr 
+
+in timezone, "select your timezone"
+
+now press install, yes
+(if it fails turn off pc remove usb turn pc on, turn pc off put usb back in and attempt the install again)
+
+wait for the installations to complete
+once complete press reboot system, remove usb once screen goes black\
+
+once logged in press super(windows button) + q 
+
+type the following commands:
+(type y and press enter whenever promted)
+sudo pacman -S network-manager-applet
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install flathub org.vinegarhq.Sober com.bambulab.BambuStudio com.valvesoftware.Steam app.zen_browser.zen
+git clone https://github.com/LazyVim/starter ~/.config/nvim
+rm -rf ~/.config/nvim/.git
+nvim
+
+once everything is installed and nvim is open
+press super + c to close everything 
+
+press super + q and type nautilus
+press the arrow in the bottom right and show hidden files, .config, hypr
+
