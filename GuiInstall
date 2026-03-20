@@ -114,6 +114,12 @@ nvim
 once everything is installed and nvim is open
 press super + c to close everything 
 
-press super + q and type nautilus
-press the arrow in the bottom right and show hidden files, .config, hypr
+press super + q and type flatpak run app.zen_browser.zen
+and download https://github.com/MichaelWard405/ArchInstall/blob/main/hyprland.conf
 
+after which super + c everything
+Super + q and type nautilus, click the arrow in the bottom right, press show hidden files
+click .config, hypr, and replace the hyprland.conf file with the downloaded one
+
+now you have a setup arch linux install with everything preinstalled 
+refer to the hyprland.conf to see/ add keybinds
