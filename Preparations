@@ -1,0 +1,34 @@
+This is a Guide/ preset for my personal arch install for myself to reference and share to others that have shown an intrest in my setup.
+first and foremost you will require a ArchInstaller. (if you have one already Prepared Skip these steps)
+
+first download/open your prefered iso writing tool or use Rufus(windows), impression(linux)
+Then you will need to download an arch .iso located here: https://archlinux.org/download/
+scroll down and find your region and pick a link( i prefer aarnet.edu.au in australia)
+once downloaded plug a usb into your computer
+in your iso writing tool select your usb and newly installed arch iso and press write
+
+(skip to here)
+Follow these steps for a windows dual boot(skip if you only want arch)
+open "create and format hard disks"
+in the partions sections in the lower half right click the partion you want to install linux into and press shink volume
+free however much space you want linux to use i recommend 20gb for the lowest but 40gb-80gb is better
+after confirming the shink you should see unallocated space, which is what linux will use once installed 
+
+(skip to here) 
+now with your archinstaller in your pc, open your bios 
+within your bios find 'boot priority'and move your usb to be first
+after which save and exit (normally f10)
+now you should have loaded into the arch installer
+once it finishes loading and opens the root tty enter the following commands to connect to wifi (skip if on eternet)
+(my device name is wlan0 please replace it with whatever yours is called, it will be displayed with the second command)
+iwctl
+device list
+station wlan0 scan
+station wlan0 get-networks
+station wlan0 connect "your network here"
+"your network password"
+ctrl + c to close iwctl
+
+now your connected to the internet there are two paths for a arch install, Gui(easy/ beginner friendly but does lead to a little extra bloat), manuel(much more complex but gives much greater control of your installaion)
+Gui Install:
+Manuel Install:
