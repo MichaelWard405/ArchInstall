@@ -30,5 +30,5 @@ station wlan0 connect "your network here"
 ctrl + c to close iwctl
 
 now your connected to the internet there are two paths for a arch install, Gui(easy/ beginner friendly but does lead to a little extra bloat), manuel(much more complex but gives much greater control of your installaion)
-Gui Install:
-Manuel Install:
+Gui Install: https://github.com/MichaelWard405/ArchInstall/blob/main/GuiInstall
+Manuel Install: i'll add soon
