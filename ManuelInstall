@@ -1,0 +1,251 @@
+to get started with the manuel install we will start with installing our language and keyboard
+the following command will list all keymaps for english:
+ls /usr/share/kbd/keymaps/**/*.map.gz | grep en
+
+once you have found you keymap we will load it with the following:
+loadkeys "file name for keymap"
+
+now we will check we are in uefi:
+cat /sys/firmware/efi/fw_platform_size
+
+the command should return 32 or 64 if in uefi
+
+next we will verify our connection with the following:
+ping -c 5 archlinux.org 
+
+now we will partition our drives:
+lsdisk
+
+now all storage devices should be listed find the name of the one you want to install arch into(mine is mmcblk0)
+cfdisk /dev/"device name"
+
+now a gui with your device should open, within the gui select where you want arch to install into(free space for dual boot), use arrow keys to navigate, and enter key to click
+once you click on where you want your install we will first make a 512M volume for our bootloader(grub) after that make a second one with however much you want arch to use
+keep track of the name of both those new volumes, i will refer to the 512M as vol1 and the custom size one as vol2
+
+follow these commands to format our new volumes:
+
+mkfs.fat -F 32 /dev/vol1
+mkfs.btrfs /dev/vol2
+mount /dev/vol2 /mnt
+
+now we will mount our disk:
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@home
+umount /mnt
+
+now we will compress the volumes:
+mount -o compress=zstd,subvol=@ /dev/vol2 /mnt
+mkdir -p /mnt/home
+mount -o compress=zstd,subvol=@home /dev/vol2 /mnt/home
+
+now we will mount our bootloader:
+mkdir -p /mnt/efi
+mount /dev/vol1 /mnt/efi
+
+now we will install our packages, if you know what you are doing feel free to add or remove them:
+this is the format for the command:
+pacstrap -K /mnt pack name 1 pack name 2 etc...
+and here are the packages to list in the commands format:
+amd-ucode - updates for amd cpu 
+base - required
+base-devel - dev packages
+blueman - bluetooth applet
+btrfs-progs - file system management needed for btrfs  
+cmake - needed to build certain files
+discord - names says it all
+efibootmgr - required by grub 
+flatpak - needed to install packages using flat hub
+git - installs git 
+gnome-disk-utility
+grim - screenshot tool
+grub - bootloader
+grub-btrfs - adds btrfs support to grub
+impression - used to make bootinstallers in linux
+inotify-tools - needed for grub btrfs deamon to spot new snapshots
+kitty - personal fav terminal
+kitty-shell-intergration
+kitty-terminfo
+linux - required
+linux-firmware - required
+ly - login manager
+nano - needed for config editing
+nautilus - file explorer 
+neovim - personal fav IDE
+networkmanager - easy network management 
+obsidian - note taking app
+openrgb - for led control
+openssh - to utilize ssh 
+pipewire - needed For audio
+pipewire-alsa - needed for audio framework
+pipewire-pulse - needed for audio framework
+pipewire-jack - needed for audio framework
+prismlauncher - minecraft java launcher
+reflector - manage mirrors for pacman
+sudo - to run commands as other users
+timeshift - a gui to utilize snapshots  
+ttf-bigblueterminal-nerd
+vlc - media player
+waybar - taskbar for hypr
+wireplumber - pipewire session manager
+wofi - application search for hypr 
+
+if it fails check its all spelt correctly, if it failed for taking too long just run the command again it can take a few attempts on slower connections
+
+now we will get our mount points as they are now:
+
+genfstab -U /mnt >> /mnt/etc/fstab
+
+and check if they are correct and fine:
+
+cat /mnt/etc/fstab
+
+now we will enter our new system:
+
+arch-chroot /mnt
+
+now we will setup our lang and tty keyboard, enter the following command and uncomment which ever one represents you lang:
+
+nvim /etc/locale.gen (for example i'll uncomment en_AU.UTF-8 UTF-8)
+
+locale-gen (will generate our lang)
+
+now we will need to active our new lang with the following commands:
+
+touch /etc/locale.conf
+
+nvim /etc/locale.conf
+
+to use neovim to type press I and type LANG="enter whatever lang you installed, example:en_AU.UTF-8 UTF-8"
+now press esc and type :wq to save and exit (remember how to use neovim it will be used a decent amount)
+
+now to activate our keymaps we got before:
+
+nvim /etc/vconsole.conf
+
+add the following: 
+
+KEYMAPS="the file name of the key maps we installed before"
+
+now we will configure our host name:
+
+touch /etc/hostname
+
+nvim /etc/hostname
+(add whatever host name you want i'll use Arch)
+
+touch /etc/hosts
+
+nvim /etc/hosts
+(make the file match below with your hostname of course)
+127.0.0.1 localhost
+::1 localhost
+127.0.1.1 Arch
+
+now to set our passwords and make our user:
+
+passwd
+*enter your password*
+
+(i am using my name as the example)
+useradd -mG wheel michael
+
+passwd michael
+*enter password*
+
+run the following command and find "Uncomment to let members of group wheel execute any action" and uncomment the line BELOW IT:
+EDITOR=nvim visudo
+
+now we will deploy grub with the following:
+
+grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB  
+
+and generate its config with:
+
+grub-mkconfig -o /boot/grub/grub.cfg
+
+now enable network manager:
+
+systemctl enable NetworkManager
+
+and exit everything and reboot with the following:
+
+exit
+umount -R /mnt
+reboot
+
+enter the following upon reboot:
+
+timedatectl set-ntp true
+
+now to set up our snap shots enter the following command and replace execStart=... with ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto:
+
+sudo systemctl edit --full grub-btrfsd
+
+and enable it to run on boot:
+
+sudo systemctl enable grub-btrfsd
+
+now for a few extra packages:
+
+sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
+
+yay -S timeshift-autosnap
+
+now reboot with the following command and you will have a arch install, if you want a gui keep going if not you can stop here:
+
+reboot
+
+use the following command to install amd drivers, if you dont use amd see the driver installs for whichever you use:
+
+sudo pacman -S mesa vulkan-radeon libva-mesa-driver mesa-vdpau
+
+now for a graphial env:
+
+pacman -S --needed hyprland swaylock wofi waybar
+
+yay -S wlogout
+
+sudo pacman -S xorg-xauth
+
+yay -S ly
+
+sudo systemctl enable ly@tty1.service
+
+now do the following if you are using windows dual boot(skip if not)
+
+sudo pacman -S os-prober
+
+sudo nano /etc/default/grub
+(uncomment: GRUB_DISABLE_OS_PROBER=false)
+to write and exit nano once uncommented use the following
+ctrl + o, ctrl + x
+
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+(skip to here)
+now to install our final packages:
+
+sudo pacman -S network-manager-applet
+
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+flatpak install org.vinegarhq.Sober com.bambulab.BambuStudio com.valvesoftware.Steam app.zen_browser.zen
+
+git clone https://github.com/LazyVim/starter ~/.config/nvim
+
+rm -rf ~/.config/nvim/.git
+
+nvim
+
+once everything is installed you can reboot your system one last time
+once you have logged in hypr may prompt you close out of the all
+press Super + q and type the following: 
+nautilus
+in the bottom right there should be an arrow click it and show hidden files
+go into .config, hypr
+right click the hypr conf and open with kitty 
+go to the config i have here and copy it
+or alternatively delete the auto config and download mine there if you know how to do so
+
+and do one final reboot and you now have arch fully installed(check the hypr config for the keybinds)
