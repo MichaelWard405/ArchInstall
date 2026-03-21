@@ -14,7 +14,7 @@ next we will verify our connection with the following:
 ping -c 5 archlinux.org 
 
 now we will partition our drives:
-lsdisk
+lsblk
 
 now all storage devices should be listed find the name of the one you want to install arch into(mine is mmcblk0)
 cfdisk /dev/"device name"
